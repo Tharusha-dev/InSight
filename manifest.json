@@ -4,8 +4,13 @@
   "version": "1.0",
   "description": "Turns all websites black and white.",
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "webRequest"
+
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
 
   "action": {
     "default_popup": "popup.html"
