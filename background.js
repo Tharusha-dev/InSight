@@ -1,30 +1,34 @@
-const pattern = 'https://www.linkedin.com/voyager/api/relationships/dash/*'
+const httpReqUrlPattern = 'https://www.linkedin.com/voyager/api/relationships/dash/*'
 const regexPatternStart = '/start=(\d+)/'
 const regexPatternCount = '/count=(\d+)/'
 
-
-
 chrome.runtime.onMessage.addListener(
+
     function (request, sender, sendResponse) {
+        sendResponse("got")
         if (request.greeting == "hello") {
+
             sendResponse({ farewell: "goodbye" });
             console.log("hi from background")
 
             chrome.webRequest.onBeforeSendHeaders.addListener(
                 sendUrl,
-                { urls: [pattern] },
+                { urls: [httpReqUrlPattern] },
                 ["requestHeaders"]
 
             );
         }
-
+        return true;
     });
 
-function updateURLParameters(url) {
-    let updatedURL = url.replace(/count=\d+/, 'count=50');
-    updatedURL = updatedURL.replace(/start=\d+/, 'start=0');
+function updateURLParameters(url, numOfCon) {
+    let updatedURL = url.replace(/count=\d+/, `count=${numOfCon}`);
+    updatedURL = updatedURL.replace(/start=\d+/, 'start=150');
     return updatedURL;
 }
+
+
+
 
 
 function sendUrl(reqDetails) {
@@ -33,36 +37,53 @@ function sendUrl(reqDetails) {
     if (reqDetails != undefined) {
         var reqUrl = reqDetails.url
 
-        let newUrl = updateURLParameters(reqUrl)
-
-        console.log(`reqUrl ${reqUrl}`)
-        console.log(`processedUrl ${newUrl}`)
-
-        var reqHeaders = reqDetails.requestHeaders
-        console.log(`reqHeaders ${reqHeaders}`)
-
-        var reqMethod = reqDetails.method
-        console.log(`reqUrl ${reqMethod}`)
-
-        // Convert headers to Fetch API format
-        let fetchHeaders = new Headers();
-        reqHeaders.forEach(header => {
-            fetchHeaders.append(header.name, header.value);
-        });
+        chrome.storage.sync.get().then((val) => {
+            let newUrl = updateURLParameters(reqUrl, val['numOfElements'])
 
 
-        fetch(newUrl, {
-            method: reqMethod,
-            headers: fetchHeaders,
-        }).then(response => {
-            response.json().then((data) => {
-                console.log(data['included'])
-            })
-        })
-            .catch(error => {
-                // Handle the error here
-                console.error(error);
+            var reqHeaders = reqDetails.requestHeaders
+            // console.log(`reqHeaders ${reqHeaders}`)
+
+            var reqMethod = reqDetails.method
+            // console.log(`reqUrl ${reqMethod}`)
+
+            // Convert headers to Fetch API format
+            let fetchHeaders = new Headers();
+            let headers = {}
+
+            // console.log(fetchHeaders.values())
+            reqHeaders.forEach(header => {
+                fetchHeaders.append(header.name, header.value);
+                headers[header.name] = header.value
             });
+
+
+
+
+
+            fetch(newUrl, {
+                method: reqMethod,
+                headers: fetchHeaders,
+            }).then(response => {
+                response.json().then((data) => {
+                    let connectionsArray = data['included'].splice(0, parseInt(val['numOfElements']))
+                    console.log(connectionsArray)
+                    let csvText = exportToCSV(connectionsArray)
+                    console.log(csvText)
+                    chrome.storage.sync.set({ 'csvText': csvText })
+                    chrome.runtime.sendMessage({ greeting: "showCSVdownload" }, function (response) {
+                   
+                    });
+
+
+                })
+            })
+                .catch(error => {
+
+                    console.error(error);
+                });
+
+        })
 
 
     } else {
@@ -74,4 +95,17 @@ function sendUrl(reqDetails) {
 
 
 
+function exportToCSV(connectionsArray) {
+    let csv = "firstName,lastName,headline\n"
+    console.log(typeof (connectionsArray))
+
+    connectionsArray.forEach((connection) => {
+        let row = connection['firstName'] + ',' + connection['lastName'] + ',' + connection['headline'] + '\n'
+        csv += row
+
+    })
+
+    return csv
+
+}
 

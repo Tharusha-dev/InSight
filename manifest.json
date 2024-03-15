@@ -5,7 +5,9 @@
   "description": "Turns all websites black and white.",
   "permissions": [
     "activeTab",
-    "webRequest"
+    "webRequest",
+    "storage",
+    "downloads"
 
   ],
   "background": {
