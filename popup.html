@@ -1,14 +1,102 @@
 <html>
-    <script src="popup.js"></script>
-  <body>
-    <h1>Get LinkedIn Connections</h1>
+<script src="popup.js"></script>
+<style>
+  body {
+    width: 25em;
+    background-color: white;
+  }
 
+  .numOfElementsDiv {
+
+
+
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #numOfElements {
+
+    height: 2em;
+    width: 5em;
+
+  }
+
+  .titleDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .getButton {
+    background-color: dodgerblue;
+    color: white;
+    padding: 0.4em;
+    background: dodgerblue;
+    border-radius: 0.5em;
+    border: 0;
+    cursor: pointer;
+  }
+
+  #exportOptions{
+    padding-left: 0;
+list-style-type: none;
+  }
+
+</style>
+
+<body>
+  <div class="titleDiv">
+
+    <h1 style="color: dodgerblue;">LinkedIn Connections</h1>
+    <h3>Get to know your network</h3>
+
+  </div>
+
+
+  <div class="numOfElementsDiv">
     <h2>Num of connectios</h2>
-    
     <input id="numOfElements" type="number">
-  </br>
+  </div>
 
-    <button id="getElements">GET</button>
 
-  </body>
+  <div class="buttons">
+
+    <button id="getElements" class="getButton">Get details</button>
+
+  </div>
+  <hr border-color:dodgerblue>
+
+  <div>
+    <div style="display: flex; justify-content: center;">
+      <h2>Export data</h2>
+    </div>
+    <div>
+
+      <h3>Include</h3>
+      <ul id="exportOptions">
+        <li>
+          <input type="checkbox" name="fname" value="fname">
+          First Name
+        </li>
+        <li>
+          <input type="checkbox" name="fname" value="fname">
+          First Name
+        </li>
+        <li>
+          <input type="checkbox" name="fname" value="fname">
+          First Name
+        </li>
+      </ul>
+     <a id="csvDownloadLink"  ><button id="csvDownloadButton" class="getButton">Export to CSV</button></a> 
+
+
+
+    </div>
+  </div>
+
+</body>
+
 </html>

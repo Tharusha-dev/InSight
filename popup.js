@@ -8,19 +8,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function (request, sender, sendResponse) {
       sendResponse("got")
         if (request.greeting == "showCSVdownload") {
+          console.log("got it")
           let csvText = ''
-          let csvDonwloadButton = document.createElement('a')
-          csvDonwloadButton.id = "csvDownloadLink"
-          csvDonwloadButton.text = "Export to csv"
-          csvDonwloadButton.download = 'connections.csv'
+          let csvLink = document.getElementById('csvDownloadLink')
+          
+
+
+          // let csvDonwloadButton = document.createElement('a')
+          // csvDonwloadButton.id = "csvDownloadLink"
+          // csvDonwloadButton.text = "Export to csv"
+          csvLink.download = 'connections.csv'
           chrome.storage.sync.get().then((val)=>{
             console.log("from popip")
             console.log(val)
             csvText = val['csvText']
 
           const csvBlob = new Blob([csvText],{type: 'text/csv;charset=utf-8;'});
-          csvDonwloadButton.href = URL.createObjectURL(csvBlob)
-          document.body.appendChild(csvDonwloadButton)
+          csvLink.href = URL.createObjectURL(csvBlob)
+          // document.body.appendChild(csvDonwloadButton)
           })
 
 
