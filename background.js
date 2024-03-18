@@ -9,7 +9,7 @@ chrome.runtime.onMessage.addListener(
         if (request.greeting == "hello") {
 
             sendResponse({ farewell: "goodbye" });
-            console.log("hi from background")
+            // console.log("hi from background")
 
             chrome.webRequest.onBeforeSendHeaders.addListener(
                 sendUrl,
@@ -32,7 +32,7 @@ function updateURLParameters(url, numOfCon) {
 
 
 function sendUrl(reqDetails) {
-    console.log(`Loading: ${reqDetails.url}`)
+    // console.log(`Loading: ${reqDetails.url}`)
 
     if (reqDetails != undefined) {
         var reqUrl = reqDetails.url
@@ -65,11 +65,12 @@ function sendUrl(reqDetails) {
                 method: reqMethod,
                 headers: fetchHeaders,
             }).then(response => {
+                
                 response.json().then((data) => {
                     let connectionsArray = data['included'].splice(0, parseInt(val['numOfElements']))
-                    console.log(connectionsArray)
+                    // console.log(connectionsArray)
                     let csvText = exportToCSV(connectionsArray)
-                    console.log(csvText)
+                    // console.log(csvText)
                     chrome.storage.sync.set({ 'csvText': csvText })
                     chrome.runtime.sendMessage({ greeting: "showCSVdownload" }, function (response) {
                    
@@ -87,7 +88,7 @@ function sendUrl(reqDetails) {
 
 
     } else {
-        console.log(`says undefined ${reqDetails}`)
+        // console.log(`says undefined ${reqDetails}`)
     }
 
 
@@ -97,7 +98,7 @@ function sendUrl(reqDetails) {
 
 function exportToCSV(connectionsArray) {
     let csv = "firstName,lastName,headline\n"
-    console.log(typeof (connectionsArray))
+    // console.log(typeof (connectionsArray))
 
     connectionsArray.forEach((connection) => {
         let row = connection['firstName'] + ',' + connection['lastName'] + ',' + connection['headline'] + '\n'

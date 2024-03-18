@@ -1,13 +1,58 @@
 <html>
 <script src="popup.js"></script>
+
 <style>
+  @font-face {
+    font-family: poppins-regular;
+    src: url(Poppins-Regular.ttf);
+  }
+
+  @font-face {
+    font-family: poppins-bold;
+    src: url(Poppins-Bold.ttf);
+  }
+
+  @font-face {
+    font-family: poppins-medium;
+    src: url(Poppins-Medium.ttf);
+  }
+
+  .intro{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 30em;
+    background-color: white;
+    height: 40em;
+    position: absolute;
+
+    
+  }
+
+  .intro-done{
+    display: none;
+  }
+
   body {
-    width: 25em;
+
+    width: 30em;
+
+    padding: 1em;
+
+    font-family: 'poppins-regular';
     background-color: white;
   }
 
-  .numOfElementsDiv {
+  span {
+    font-family: 'poppins-medium';
+  }
 
+  h1 {
+    font-family: 'poppins-bold';
+  }
+
+  .numOfElementsDiv {
 
 
     display: flex;
@@ -40,14 +85,76 @@
     cursor: pointer;
   }
 
-  #exportOptions{
+  #exportOptions {
     padding-left: 0;
-list-style-type: none;
+    list-style-type: none;
   }
+
+  .loading{
+    background-color: red;
+  }
+
+  .done {
+    background-color: greenyellow;
+  }
+
+  .csvDownloadButton{
+    pointer-events: none;
+  cursor: not-allowed;
+    background-color: grey;
+
+    color: white;
+    padding: 0.4em;
+
+    border-radius: 0.5em;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .done-csv-button{
+    background-color: dodgerblue !important;
+  }
+
+  #introDoneButton{
+    background-color: dodgerblue;
+    color: white;
+    padding: 0.4em;
+    background: dodgerblue;
+    border-radius: 0.5em;
+    border: 0;
+    cursor: pointer;
+  }
+
+
+
+ 
 
 </style>
 
 <body>
+  <div id="intro-page" class="intro">
+    <div class="titleDiv">
+
+      <h1 style="color: dodgerblue;">LinkedIn Connections</h1>
+      <h3>Get to know your network</h3>
+  
+    </div>
+    <h1 style="color: dodgerblue;">How to use</h1>
+    <ol>
+      <li><h3>Log into LinkedIn on this browser</h3></li>
+      <li>
+        <h3>Go to linkedin feed => My Network => connections or click&nbsp;<a href="https://www.linkedin.com/mynetwork/invite-connect/connections/" target="_blank">this.</a>&nbsp; (and re-open the extension)</h3>
+         
+   
+
+    
+      <li><h3>Click "next"</h3></li>
+      
+
+    </ol>
+    <button id="introDoneButton"><h2 style="margin: 0">Next</h2></button>
+  </div>
+  <div>
   <div class="titleDiv">
 
     <h1 style="color: dodgerblue;">LinkedIn Connections</h1>
@@ -62,40 +169,55 @@ list-style-type: none;
   </div>
 
 
-  <div class="buttons">
-
-    <button id="getElements" class="getButton">Get details</button>
-
-  </div>
   <hr border-color:dodgerblue>
 
-  <div>
-    <div style="display: flex; justify-content: center;">
-      <h2>Export data</h2>
+
+
+  <div id="main" class="main-closed">
+
+    <h3>Include</h3>
+    <ul id="exportOptions">
+      <li>
+        <input id="firstNameCheckbox" type="checkbox" name="fname" value="fname">
+        First Name
+      </li>
+      <li>
+        <input id="lastNameCheckbox" type="checkbox" name="lname" value="lname">
+        Last Name
+      </li>
+      <li>
+        <input id="jobCheckBox" type="checkbox" name="job" value="job">
+        Job Title
+      </li>
+    </ul>
+
+    <div class="buttons">
+
+      <button id="getElements" class="getButton">Get details</button>
+
     </div>
-    <div>
 
-      <h3>Include</h3>
-      <ul id="exportOptions">
-        <li>
-          <input type="checkbox" name="fname" value="fname">
-          First Name
-        </li>
-        <li>
-          <input type="checkbox" name="fname" value="fname">
-          First Name
-        </li>
-        <li>
-          <input type="checkbox" name="fname" value="fname">
-          First Name
-        </li>
-      </ul>
-     <a id="csvDownloadLink"  ><button id="csvDownloadButton" class="getButton">Export to CSV</button></a> 
+    <hr>
+    <a id="csvDownloadLink"><button id="csvDownloadButton" class="csvDownloadButton">Export to CSV</button></a>
 
 
-
-    </div>
   </div>
+
+  <hr>
+  <div style="padding-top: 0.5em;">
+    <div class="" style="display: flex;">
+
+      <span>Made with&nbsp;</span><img src="heart.svg" alt=""><span>&nbsp;by</span><a
+        href="https://www.linkedin.com/in/tharusha-jayasooriya-1540b52aa/" target="_blank">&nbsp;Tharusha</a>
+    </div>
+
+    <a href="https://www.buymeacoffee.com/TharushaJ" target="_blank"><img src="bmc-button.svg" alt="Buy Me A Coffee"
+        style="width: 10em; padding-top: 0.5em;"></a>
+
+  </div>
+
+</div>
+
 
 </body>
 
