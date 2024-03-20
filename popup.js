@@ -16,6 +16,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
   chrome.storage.sync.set({'numOfElements':0})
 
+  chrome.runtime.onMessage.addListener(
+    function (request, sender, sendResponse) {
+      sendResponse("got")
+        if (request.greeting == "showLoadingButton") {
+          getElementsButton.classList.remove('loading')
+          getElementsButton.classList.add('done')
+          getElementsButton.textContent = 'Loading Please Wait'
+          // csvDonwloadButton.classList.add('done-csv-button')
+        }
+          return true; 
+        })
+
 
   chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
