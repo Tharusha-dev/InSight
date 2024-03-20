@@ -36,12 +36,12 @@ async function getRequests(numOfRequests, lastRequestNumOfElements, reqMethod, f
   
     // Fetch requests loop (guaranteed to complete first)
     for (let i = 0; i < numOfRequests; i++) {
-      let newUrl = updateURLParameters(reqUrl, 100, start);
+      let newUrl = updateURLParameters(reqUrl, 50, start);
   
       console.log(`from getRequest cycle => i : ${i}`);
       console.log(`from getRequest cycle => start : ${start}`);
   
-      start = start + 100;
+      start = start + 50;
 
      
       
@@ -53,42 +53,56 @@ async function getRequests(numOfRequests, lastRequestNumOfElements, reqMethod, f
 
       let data = await req.json()
 
-      console.log("from request main chunks array :");
-      console.log(data['included'].splice(0, 100));
+      console.log("from request main chunks array type:");
+    let tempArray = data['included'].splice(0, 50)
+console.log(tempArray)
+      console.log(typeof(data['included'].splice(0, 50))); 
+    //   console.log((data['included'].splice(0, 50))); 
 
-      connectionsArray.push(...data['included'].splice(0, parseInt(numOfRequests)));
+      console.log("type of connection array:");
+      console.log(typeof(connectionsArray))
+
+    tempArray.forEach((element)=>{
+        connectionsArray.push(element)
+    })
+
+    //   connectionsArray.push(...data['included'].splice(0, 50));
+
+      console.log("from request main chunks array : con array");
+
+      console.log(connectionsArray) //FAIL GETS {createdAt: 1710817407000, connectedMember: 'urn:li:fsd_profile:ACoAABjl8N ......
+
 
       console.log(`from getRequest cycle => newUrl : ${newUrl}`);
 
-    //   .then(response => {
-    //     response.json().then((data) => {
-    //       console.log("from request main chunks array :");
-    //       console.log(data['included'].splice(0, 100));
-  
-    //       connectionsArray.push(...data['included'].splice(0, parseInt(numOfRequests)));
-  
-    //       console.log(`from getRequest cycle => newUrl : ${newUrl}`);
-    //     });
-    //   }).catch(error => {
-    //     console.error(error);
-    //     return ['error'];;
-    //   });
+
     }
   
     // If clause and remaining code (executed after the loop)
     if (lastRequestNumOfElements != 0) {
       let newUrl = updateURLParameters(reqUrl, lastRequestNumOfElements, start);
       console.log(`from getRequest lastReq => newUrl : ${newUrl}`);
-  
+    
       let last_req = await fetch(newUrl, {
         method: reqMethod,
         headers: fetchHeaders,
       })
       
-      let last_data = last_req.json()
+      let last_data = await last_req.json()
 
-      connectionsArray.push(...last_data['included'].splice(0, parseInt(lastRequestNumOfElements)));
-      
+    //   connectionsArray.push(...last_data['included'].splice(0, parseInt(lastRequestNumOfElements)));
+
+      let tempArray_last = last_data['included'].splice(0, parseInt(lastRequestNumOfElements))
+      console.log(tempArray_last)
+      tempArray_last.forEach((element)=>{
+          connectionsArray.push(element)
+      })
+
+      console.log("from request lasty : con array");
+
+      console.log(connectionsArray)
+  
+
     //   .then(response => {
     //     response.json().then((data) => {
     //       connectionsArray.push(...data['included'].splice(0, parseInt(lastRequestNumOfElements)));
@@ -254,13 +268,13 @@ async function getRequests(numOfRequests, lastRequestNumOfElements, reqMethod, f
                     headers[header.name] = header.value
                 });
     
-                if (parseInt(numOfConnetionsToGet) > 100) {
+                if (parseInt(numOfConnetionsToGet) > 50) {
     
-                console.log(`from send url numOfConnections to get is bigger than 100`)
+                console.log(`from send url numOfConnections to get is bigger than 50`)
     
     
-                    let requestChunks = Math.floor(parseInt(numOfConnetionsToGet) / 100)
-                    let lastReqestNumberOfElements = parseInt(numOfConnetionsToGet) % 100
+                    let requestChunks = Math.floor(parseInt(numOfConnetionsToGet) / 50)
+                    let lastReqestNumberOfElements = parseInt(numOfConnetionsToGet) % 50
     
                 console.log(`from send url requetChunks : ${requestChunks}`)
                 console.log(`from send url lastNumberOfELement : ${lastReqestNumberOfElements}`)
@@ -283,10 +297,10 @@ async function getRequests(numOfRequests, lastRequestNumOfElements, reqMethod, f
     
     
                 } else {
-                console.log(`from send url numOfConnections to get is NOT bigger than 100`)
+                console.log(`from send url numOfConnections to get is NOT bigger than 50`)
     
                     let newUrl = updateURLParameters(reqUrl, numOfConnetionsToGet, 0)
-                console.log(`from send url numOfConnections to get is NOT bigger than 100 and new url : ${newUrl}`)
+                console.log(`from send url numOfConnections to get is NOT bigger than 50 and new url : ${newUrl}`)
     
     
     
