@@ -94,6 +94,8 @@ document.addEventListener('DOMContentLoaded', function() {
     })
   
     getElementsButton.addEventListener('click', function() {
+      
+      console.log("clikced")
       getElementsButton.textContent = 'Scroll down untill new contetnt starts loading !!!'
       getElementsButton.classList.add('loading')
       // console.log(numberOfElementsField.value)
@@ -106,6 +108,14 @@ document.addEventListener('DOMContentLoaded', function() {
     chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
       console.log(response.farewell);
     });
+
+
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello2content"}, function(response) {
+          console.log(response.farewell);
+      });
+  });
+  
     });
   
 
