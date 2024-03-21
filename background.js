@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener(
         if (request.greeting == "hello") {
 
             sendResponse({ farewell: "goodbye" });
- 
+
             chrome.webRequest.onBeforeSendHeaders.addListener(
                 sendUrl,
                 { urls: [httpReqUrlPattern] },
@@ -60,41 +60,44 @@ async function getRequests(numOfRequests, lastRequestNumOfElements, reqMethod, f
 
         await new Promise(r => setTimeout(r, delay));
 
-        // try {
+        try {
 
-        // }catch(error){
-        //     console.log(`Error : ${error}`)
-        // }
+            let req = await fetch(newUrl, {
+                method: reqMethod,
+                headers: fetchHeaders,
+            })
 
+            let data = await req.json()
 
-        let req = await fetch(newUrl, {
-            method: reqMethod,
-            headers: fetchHeaders,
-        })
+            console.log("from request main chunks array type:");
+            let tempArray = data['included'].splice(0, requestChunksDivider)
+            console.log(tempArray)
+            console.log(typeof (data['included'].splice(0, requestChunksDivider)));
+            //   console.log((data['included'].splice(0, 50))); 
 
-        let data = await req.json()
+            console.log("type of connection array:");
+            console.log(typeof (connectionsArray))
 
-        console.log("from request main chunks array type:");
-        let tempArray = data['included'].splice(0, requestChunksDivider)
-        console.log(tempArray)
-        console.log(typeof (data['included'].splice(0, requestChunksDivider)));
-        //   console.log((data['included'].splice(0, 50))); 
+            tempArray.forEach((element) => {
+                connectionsArray.push(element)
+            })
 
-        console.log("type of connection array:");
-        console.log(typeof (connectionsArray))
+            //   connectionsArray.push(...data['included'].splice(0, 50));
 
-        tempArray.forEach((element) => {
-            connectionsArray.push(element)
-        })
+            console.log("from request main chunks array : con array");
 
-        //   connectionsArray.push(...data['included'].splice(0, 50));
-
-        console.log("from request main chunks array : con array");
-
-        console.log(connectionsArray) //FAIL GETS {createdAt: 1710817407000, connectedMember: 'urn:li:fsd_profile:ACoAABjl8N ......
+            console.log(connectionsArray) //FAIL GETS {createdAt: 1710817407000, connectedMember: 'urn:li:fsd_profile:ACoAABjl8N ......
 
 
-        console.log(`from getRequest cycle => newUrl : ${newUrl}`);
+            console.log(`from getRequest cycle => newUrl : ${newUrl}`);
+
+        } catch (error) {
+
+            console.log(`Error : ${error}`)
+        }
+
+
+
 
 
     }
@@ -105,22 +108,31 @@ async function getRequests(numOfRequests, lastRequestNumOfElements, reqMethod, f
         let newUrl = updateURLParameters(reqUrl, lastRequestNumOfElements, start);
         console.log(`from getRequest lastReq => newUrl : ${newUrl}`);
 
-        let last_req = await fetch(newUrl, {
-            method: reqMethod,
-            headers: fetchHeaders,
-        })
+        try {
+            let last_req = await fetch(newUrl, {
+                method: reqMethod,
+                headers: fetchHeaders,
+            })
 
-        let last_data = await last_req.json()
+            let last_data = await last_req.json()
 
-        let tempArray_last = last_data['included'].splice(0, parseInt(lastRequestNumOfElements))
-        console.log(tempArray_last)
-        tempArray_last.forEach((element) => {
-            connectionsArray.push(element)
-        })
+            let tempArray_last = last_data['included'].splice(0, parseInt(lastRequestNumOfElements))
+            console.log(tempArray_last)
+            tempArray_last.forEach((element) => {
+                connectionsArray.push(element)
+            })
 
-        console.log("from request lasty : con array");
+            console.log("from request lasty : con array");
 
-        console.log(connectionsArray)
+            console.log(connectionsArray)
+        } catch (error) {
+
+            console.log(`Error : ${error}`)
+
+
+        }
+
+
 
 
     }
@@ -250,9 +262,10 @@ function convertToCSV(connectionsArray) {
 
         // Sanitize values  
 
-        let firstName = connection['firstName'].replace(",",'-').replace("\n",'-')
-        let lastName = connection['lastName'].replace(",",'-').replace("\n",'-')
-        let headline = connection['headline'].replace(",",'-').replace("\n",'-')
+
+        let firstName = connection['firstName'].replaceAll(",", '-').replaceAll("\n", '-')
+        let lastName = connection['lastName'].replaceAll(",", '-').replaceAll("\n", '-')
+        let headline = connection['headline'].replaceAll(",", '-').replaceAll("\n", '-')
 
         let row_ = connection['firstName'] + ',' + connection['lastName'] + ',' + connection['headline'] + '\n'
         let row = firstName + ',' + lastName + ',' + headline + '\n'
