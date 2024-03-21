@@ -13,9 +13,9 @@ chrome.runtime.onMessage.addListener(
 
     function (request, sender, sendResponse) {
         sendResponse("got")
-        if (request.greeting == "hello") {
+        if (request.action == "getOriginalRequest") {
 
-            sendResponse({ farewell: "goodbye" });
+            sendResponse({ farewell: "gotFromBackground" });
 
             chrome.webRequest.onBeforeSendHeaders.addListener(
                 sendUrl,
@@ -73,7 +73,6 @@ async function getRequests(numOfRequests, lastRequestNumOfElements, reqMethod, f
             let tempArray = data['included'].splice(0, requestChunksDivider)
             console.log(tempArray)
             console.log(typeof (data['included'].splice(0, requestChunksDivider)));
-            //   console.log((data['included'].splice(0, 50))); 
 
             console.log("type of connection array:");
             console.log(typeof (connectionsArray))
@@ -82,13 +81,10 @@ async function getRequests(numOfRequests, lastRequestNumOfElements, reqMethod, f
                 connectionsArray.push(element)
             })
 
-            //   connectionsArray.push(...data['included'].splice(0, 50));
 
             console.log("from request main chunks array : con array");
 
-            console.log(connectionsArray) //FAIL GETS {createdAt: 1710817407000, connectedMember: 'urn:li:fsd_profile:ACoAABjl8N ......
-
-
+            console.log(connectionsArray) 
             console.log(`from getRequest cycle => newUrl : ${newUrl}`);
 
         } catch (error) {
@@ -146,7 +142,7 @@ function sendUrl(reqDetails) {
     if (!isRequestCaptured) {
 
         isRequestCaptured = true
-        chrome.runtime.sendMessage({ greeting: "showLoadingButton" }, function (response) { });
+        chrome.runtime.sendMessage({ action: "showLoadingButton" }, function (response) { });
 
         // console.log(`Loading: ${reqDetails.url}`)
 
@@ -206,7 +202,7 @@ function sendUrl(reqDetails) {
                         console.log(csvText);
                         chrome.storage.local.set({ 'csvText': csvText });
                         console.log("completed requests sending showCSVdownload");
-                        chrome.runtime.sendMessage({ greeting: "showCSVdownload" }, function (response) {
+                        chrome.runtime.sendMessage({ action: "showCSVdownload" }, function (response) {
 
                         });
 
@@ -231,7 +227,7 @@ function sendUrl(reqDetails) {
                             let csvText = convertToCSV(connectionsArray)
                             // console.log(csvText)
                             chrome.storage.local.set({ 'csvText': csvText })
-                            chrome.runtime.sendMessage({ greeting: "showCSVdownload" }, function (response) {
+                            chrome.runtime.sendMessage({ action: "showCSVdownload" }, function (response) {
 
                             });
 

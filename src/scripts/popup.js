@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
   chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
       sendResponse("got")
-      if (request.greeting == "showLoadingButton") {
+      if (request.action == "showLoadingButton") {
         getElementsButton.classList.remove('loading')
         getElementsButton.classList.add('done')
         getElementsButton.textContent = 'Loading Please Wait'
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
   chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
       sendResponse("got")
-      if (request.greeting == "showCSVdownload") {
+      if (request.action == "showCSVdownload") {
         getElementsButton.classList.remove('loading')
         getElementsButton.classList.add('done')
         getElementsButton.textContent = 'Done'
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   getElementsButton.addEventListener('click', function () {
 
-    console.log("clikced")
+
     getElementsButton.textContent = 'Scroll down untill new contetnt starts loading !!!'
     getElementsButton.classList.add('loading')
     // console.log(numberOfElementsField.value)
@@ -103,14 +103,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     chrome.storage.local.set({ 'numOfElements': numberOfElementsField.value })
 
-    chrome.runtime.sendMessage({ greeting: "hello" }, function (response) {
-      console.log(response.farewell);
+    chrome.runtime.sendMessage({ action: "getOriginalRequest" }, function (response) {
+
     });
 
 
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, { greeting: "hello2content" }, function (response) {
-        console.log(response.farewell);
+      chrome.tabs.sendMessage(tabs[0].id, { action: "getNumOfConnectionContent" }, function (response) {
+      
       });
     });
 

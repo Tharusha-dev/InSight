@@ -1,19 +1,16 @@
-console.log("hi from contetnt 1")
-
-
 chrome.runtime.onMessage.addListener(
 
     function (request, sender, sendResponse) {
         
-        sendResponse("got")
-        if (request.greeting == "hello2content") {
+        sendResponse("gotFromContent")
+        if (request.action == "getNumOfConnectionContent") {
 
             let numOfConnections = document.getElementsByClassName("t-18 t-black t-normal")[0].innerText.split(' ')[0]
             
 
-            sendResponse({ farewell: "goodbye2" });
+            sendResponse({ farewell: "doneFromContent" });
             chrome.storage.local.set({"numOfConnetions":numOfConnections})
-            console.log(numOfConnections)
+       
 
             
         }
