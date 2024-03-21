@@ -17,7 +17,7 @@
     src: url(Poppins-Medium.ttf);
   }
 
-  .intro{
+  .intro {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -27,10 +27,10 @@
     height: 40em;
     position: absolute;
 
-    
+
   }
 
-  .intro-done{
+  .intro-done {
     display: none;
   }
 
@@ -90,7 +90,7 @@
     list-style-type: none;
   }
 
-  .loading{
+  .loading {
     background-color: red;
   }
 
@@ -98,9 +98,9 @@
     background-color: greenyellow;
   }
 
-  .csvDownloadButton{
+  .csvDownloadButton {
     pointer-events: none;
-  cursor: not-allowed;
+    cursor: not-allowed;
     background-color: grey;
 
     color: white;
@@ -111,11 +111,11 @@
     cursor: pointer;
   }
 
-  .done-csv-button{
+  .done-csv-button {
     background-color: dodgerblue !important;
   }
 
-  #introDoneButton{
+  #introDoneButton {
     background-color: dodgerblue;
     color: white;
     padding: 0.4em;
@@ -124,11 +124,6 @@
     border: 0;
     cursor: pointer;
   }
-
-
-
- 
-
 </style>
 
 <body>
@@ -137,86 +132,94 @@
 
       <h1 style="color: dodgerblue;">LinkedIn Connections</h1>
       <h3>Get to know your network</h3>
-  
+
     </div>
     <h1 style="color: dodgerblue;">How to use</h1>
     <ol>
-      <li><h3>Log into LinkedIn on this browser</h3></li>
       <li>
-        <h3>Go to linkedin feed => My Network => connections or click&nbsp;<a href="https://www.linkedin.com/mynetwork/invite-connect/connections/" target="_blank">this.</a>&nbsp; (and re-open the extension)</h3>
-         
-   
+        <h3>Log into LinkedIn on this browser</h3>
+      </li>
+      <li>
+        <h3>Go to linkedin feed => My Network => connections or click&nbsp;<a
+            href="https://www.linkedin.com/mynetwork/invite-connect/connections/" target="_blank">this.</a>&nbsp; (and
+          re-open the extension)</h3>
 
-    
-      <li><h3>Click "next"</h3></li>
-      
+
+
+
+      <li>
+        <h3>Click "next"</h3>
+      </li>
+
 
     </ol>
-    <button id="introDoneButton"><h2 style="margin: 0">Next</h2></button>
+    <button id="introDoneButton">
+      <h2 style="margin: 0">Next</h2>
+    </button>
   </div>
   <div>
-  <div class="titleDiv">
+    <div class="titleDiv">
 
-    <h1 style="color: dodgerblue;">LinkedIn Connections</h1>
-    <h3>Get to know your network</h3>
+      <h1 style="color: dodgerblue;">LinkedIn Connections</h1>
+      <h3>Get to know your network</h3>
 
-  </div>
-
-
-  <div class="numOfElementsDiv">
-    <h2>Num of connectios</h2>
-    <input id="numOfElements" type="number">
-  </div>
+    </div>
 
 
-  <hr border-color:dodgerblue>
+    <div class="numOfElementsDiv">
+      <h2>Num of connectios</h2>
+      <input id="numOfElements" type="number">
+    </div>
+
+
+    <hr border-color:dodgerblue>
 
 
 
-  <div id="main" class="main-closed">
+    <div id="main" class="main-closed">
 
-    <h3>Include</h3>
-    <ul id="exportOptions">
-      <li>
-        <input id="firstNameCheckbox" type="checkbox" name="fname" value="fname">
-        First Name
-      </li>
-      <li>
-        <input id="lastNameCheckbox" type="checkbox" name="lname" value="lname">
-        Last Name
-      </li>
-      <li>
-        <input id="jobCheckBox" type="checkbox" name="job" value="job">
-        Job Title
-      </li>
-    </ul>
+      <h3>Include</h3>
+      <ul id="exportOptions">
+        <li>
+          <input id="firstNameCheckbox" type="checkbox" name="fname" value="fname">
+          First Name
+        </li>
+        <li>
+          <input id="lastNameCheckbox" type="checkbox" name="lname" value="lname">
+          Last Name
+        </li>
+        <li>
+          <input id="jobCheckBox" type="checkbox" name="job" value="job">
+          Job Title
+        </li>
+      </ul>
 
-    <div class="buttons">
+      <div class="buttons">
 
-      <button id="getElements" class="getButton">Get details</button>
+        <button id="getElements" class="getButton">Get details</button>
+
+      </div>
+
+      <hr>
+      <a id="csvDownloadLink"><button id="csvDownloadButton" class="csvDownloadButton">Export to CSV</button></a>
+
 
     </div>
 
     <hr>
-    <a id="csvDownloadLink"><button id="csvDownloadButton" class="csvDownloadButton">Export to CSV</button></a>
+    <div style="padding-top: 0.5em;">
+      <div class="" style="display: flex;">
 
+        <span>Made with&nbsp;</span><img src="heart.svg" alt=""><span>&nbsp;by</span><a
+          href="https://www.linkedin.com/in/tharusha-jayasooriya-1540b52aa/" target="_blank">&nbsp;Tharusha</a>
+      </div>
 
-  </div>
+      <a href="https://www.buymeacoffee.com/TharushaJ" target="_blank"><img src="bmc-button.svg" alt="Buy Me A Coffee"
+          style="width: 10em; padding-top: 0.5em;"></a>
 
-  <hr>
-  <div style="padding-top: 0.5em;">
-    <div class="" style="display: flex;">
-
-      <span>Made with&nbsp;</span><img src="heart.svg" alt=""><span>&nbsp;by</span><a
-        href="https://www.linkedin.com/in/tharusha-jayasooriya-1540b52aa/" target="_blank">&nbsp;Tharusha</a>
     </div>
 
-    <a href="https://www.buymeacoffee.com/TharushaJ" target="_blank"><img src="bmc-button.svg" alt="Buy Me A Coffee"
-        style="width: 10em; padding-top: 0.5em;"></a>
-
   </div>
-
-</div>
 
 
 </body>

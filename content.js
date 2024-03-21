@@ -12,7 +12,7 @@ chrome.runtime.onMessage.addListener(
             
 
             sendResponse({ farewell: "goodbye2" });
-            chrome.storage.sync.set({"numOfConnetions":numOfConnections})
+            chrome.storage.local.set({"numOfConnetions":numOfConnections})
             console.log(numOfConnections)
 
             

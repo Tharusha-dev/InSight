@@ -1,8 +1,13 @@
 const httpReqUrlPattern = 'https://www.linkedin.com/voyager/api/relationships/dash/*'
 const regexPatternStart = '/start=(\d+)/'
 const regexPatternCount = '/count=(\d+)/'
+const maxDelay = 500
+const requestChunksDivider = 100
 
+// Make sure the original voyager request is captured only once
 let isRequestCaptured = false
+
+// Listen for the original voyager request
 
 chrome.runtime.onMessage.addListener(
 
@@ -11,8 +16,7 @@ chrome.runtime.onMessage.addListener(
         if (request.greeting == "hello") {
 
             sendResponse({ farewell: "goodbye" });
-            // console.log("hi from background")
-
+ 
             chrome.webRequest.onBeforeSendHeaders.addListener(
                 sendUrl,
                 { urls: [httpReqUrlPattern] },
@@ -23,366 +27,239 @@ chrome.runtime.onMessage.addListener(
         return true;
     });
 
+
+
+// Modify the request
+
 function updateURLParameters(url, numOfCon, start) {
     let updatedURL = url.replace(/count=\d+/, `count=${numOfCon}`);
     updatedURL = updatedURL.replace(/start=\d+/, `start=${start}`);
     return updatedURL;
 }
 
+// Fetch 
+
 async function getRequests(numOfRequests, lastRequestNumOfElements, reqMethod, fetchHeaders, reqUrl) {
     console.log("got into getRequest");
     let start = 0;
     let connectionsArray = [];
-  
-    // Fetch requests loop (guaranteed to complete first)
+
+    // Fetch requests loop 
+    // To avoid possible rate limits one request is capped to only requestChunksDivider amount of connections. Random delay (maximum dely is maxDelay ) is also set in between reqests.
+
     for (let i = 0; i < numOfRequests; i++) {
-      let newUrl = updateURLParameters(reqUrl, 50, start);
-  
-      console.log(`from getRequest cycle => i : ${i}`);
-      console.log(`from getRequest cycle => start : ${start}`);
-  
-      start = start + 50;
+        let newUrl = updateURLParameters(reqUrl, requestChunksDivider, start);
 
-     
-      
-  
-      let req = await fetch(newUrl, {
-        method: reqMethod,
-        headers: fetchHeaders,
-      })
+        console.log(`from getRequest cycle => i : ${i}`);
+        console.log(`from getRequest cycle => start : ${start}`);
 
-      let data = await req.json()
+        start = start + requestChunksDivider;
 
-      console.log("from request main chunks array type:");
-    let tempArray = data['included'].splice(0, 50)
-console.log(tempArray)
-      console.log(typeof(data['included'].splice(0, 50))); 
-    //   console.log((data['included'].splice(0, 50))); 
+        let delay = Math.floor(Math.random() * maxDelay);
+        console.log(`from getRequest cycle => setting a delay of : ${delay}`);
 
-      console.log("type of connection array:");
-      console.log(typeof(connectionsArray))
+        await new Promise(r => setTimeout(r, delay));
 
-    tempArray.forEach((element)=>{
-        connectionsArray.push(element)
-    })
+        // try {
 
-    //   connectionsArray.push(...data['included'].splice(0, 50));
-
-      console.log("from request main chunks array : con array");
-
-      console.log(connectionsArray) //FAIL GETS {createdAt: 1710817407000, connectedMember: 'urn:li:fsd_profile:ACoAABjl8N ......
+        // }catch(error){
+        //     console.log(`Error : ${error}`)
+        // }
 
 
-      console.log(`from getRequest cycle => newUrl : ${newUrl}`);
+        let req = await fetch(newUrl, {
+            method: reqMethod,
+            headers: fetchHeaders,
+        })
+
+        let data = await req.json()
+
+        console.log("from request main chunks array type:");
+        let tempArray = data['included'].splice(0, requestChunksDivider)
+        console.log(tempArray)
+        console.log(typeof (data['included'].splice(0, requestChunksDivider)));
+        //   console.log((data['included'].splice(0, 50))); 
+
+        console.log("type of connection array:");
+        console.log(typeof (connectionsArray))
+
+        tempArray.forEach((element) => {
+            connectionsArray.push(element)
+        })
+
+        //   connectionsArray.push(...data['included'].splice(0, 50));
+
+        console.log("from request main chunks array : con array");
+
+        console.log(connectionsArray) //FAIL GETS {createdAt: 1710817407000, connectedMember: 'urn:li:fsd_profile:ACoAABjl8N ......
+
+
+        console.log(`from getRequest cycle => newUrl : ${newUrl}`);
 
 
     }
-  
-    // If clause and remaining code (executed after the loop)
+
+    // Last chunk of reqests
+
     if (lastRequestNumOfElements != 0) {
-      let newUrl = updateURLParameters(reqUrl, lastRequestNumOfElements, start);
-      console.log(`from getRequest lastReq => newUrl : ${newUrl}`);
-    
-      let last_req = await fetch(newUrl, {
-        method: reqMethod,
-        headers: fetchHeaders,
-      })
-      
-      let last_data = await last_req.json()
+        let newUrl = updateURLParameters(reqUrl, lastRequestNumOfElements, start);
+        console.log(`from getRequest lastReq => newUrl : ${newUrl}`);
 
-    //   connectionsArray.push(...last_data['included'].splice(0, parseInt(lastRequestNumOfElements)));
+        let last_req = await fetch(newUrl, {
+            method: reqMethod,
+            headers: fetchHeaders,
+        })
 
-      let tempArray_last = last_data['included'].splice(0, parseInt(lastRequestNumOfElements))
-      console.log(tempArray_last)
-      tempArray_last.forEach((element)=>{
-          connectionsArray.push(element)
-      })
+        let last_data = await last_req.json()
 
-      console.log("from request lasty : con array");
+        let tempArray_last = last_data['included'].splice(0, parseInt(lastRequestNumOfElements))
+        console.log(tempArray_last)
+        tempArray_last.forEach((element) => {
+            connectionsArray.push(element)
+        })
 
-      console.log(connectionsArray)
-  
+        console.log("from request lasty : con array");
 
-    //   .then(response => {
-    //     response.json().then((data) => {
-    //       connectionsArray.push(...data['included'].splice(0, parseInt(lastRequestNumOfElements)));
-    //     });
-    //   }).catch(error => {
-    //     console.error(error);
-    //     return ['error'];
-    //   });
+        console.log(connectionsArray)
+
+
     }
-  
-    // console.log("completed requests connection array :");
-    // console.log(connectionsArray);
-  
-    
+
     return connectionsArray;
-  }
-  
-
-
-// async function getRequests(numOfRequests, lastRequestNumOfElements, reqMethod, fetchHeaders, reqUrl) {
-//     console.log("got into getRequest")
-//     let start = 0
-//     let connectionsArray = []
-//     for (let i = 0; i < numOfRequests; i++) {
-//         let newUrl = updateURLParameters(reqUrl, 100, start)
-
-//         console.log(`from getRequest cycle => i : ${i}`)
-
-//         console.log(`from getRequest cycle => start : ${start}`)
-
-
-//         start = start + 100
-
-        
-
-//         await fetch(newUrl, {
-//             method: reqMethod,
-//             headers: fetchHeaders,
-//         }).then(response => {
-
-//             response.json().then((data) => {
-//     console.log("from request main chunks  array :")
-//     console.log(data['included'].splice(0,100))
-                
-//                 connectionsArray.push(...data['included'].splice(0, parseInt(numOfRequests)))
-
-      
-//                 console.log(`from getRequest cycle => newUrl : ${newUrl}`)
-
-//                 // console.log(`from getRequest cycle => connectionsArray : ${connectionsArray}`)
-
-//                 // console.log(connectionsArray)
-//                 // let csvText = exportToCSV(connectionsArray)
-//                 // // console.log(csvText)
-//                 // chrome.storage.sync.set({ 'csvText': csvText })
-//                 // chrome.runtime.sendMessage({ greeting: "showCSVdownload" }, function (response) {
-
-//                 // });
-
-
-//             })
-//         })
-//             .catch(error => {
-
-//                 console.error(error);
-//                 return false
-//             });
-
-//     }
-
-//     if (lastRequestNumOfElements != 0) {
-
-//         let newUrl = updateURLParameters(reqUrl, lastRequestNumOfElements, start)
-//         console.log(`from getRequest lastReq => newUrl : ${newUrl}`)
-
-
-//         await fetch(newUrl, {
-//             method: reqMethod,
-//             headers: fetchHeaders,
-//         }).then(response => {
-
-//             response.json().then((data) => {
-//                 // data['included'].splice(0, parseInt(numOfConnetionsToGet))
-
-//                 connectionsArray.push(...data['included'].splice(0, parseInt(lastRequestNumOfElements)))
+}
 
 
 
-//             })
-//         })
-//             .catch(error => {
-
-//                 console.error(error);
-//                 return false
-//             });
-//     }
-//     console.log("completed requests connection array :")
-
-//     console.log(connectionsArray)
-//     let csvText = exportToCSV(connectionsArray)
-//     // console.log(csvText)
-//     chrome.storage.sync.set({ 'csvText': csvText })
-//     console.log("completed requests sending showCSVdownload")
-//     chrome.runtime.sendMessage({ greeting: "showCSVdownload" }, function (response) {
-
-//     });
-
-//     return true
-
-// }
-
-
-
-
- function sendUrl(reqDetails) {
-    if(!isRequestCaptured){
+function sendUrl(reqDetails) {
+    if (!isRequestCaptured) {
 
         isRequestCaptured = true
         chrome.runtime.sendMessage({ greeting: "showLoadingButton" }, function (response) { });
 
         // console.log(`Loading: ${reqDetails.url}`)
-    
+
         if (reqDetails != undefined) {
             var reqUrl = reqDetails.url
-    
-            chrome.storage.sync.get().then((val) => {
-    
+
+            chrome.storage.local.get().then((val) => {
+
                 let numOfConnectionsInt = parseInt(val["numOfConnetions"])
                 let numOfElementsInt = parseInt(val['numOfElements'])
                 let numOfConnetionsToGet = 0
-    
+
                 if (numOfElementsInt > numOfConnectionsInt) {
                     numOfConnetionsToGet = val['numOfConnections']
                 } else {
                     numOfConnetionsToGet = val['numOfElements']
-    
+
                 }
-    
+
                 console.log(`from send url numOfConnectionsInt : ${numOfConnectionsInt}`)
                 console.log(`from send url numOfElementsInt : ${numOfConnectionsInt}`)
                 console.log(`from send url numOfConnectionsToGet : ${numOfConnetionsToGet}`)
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
                 var reqHeaders = reqDetails.requestHeaders
                 // console.log(`reqHeaders ${reqHeaders}`)
-    
+
                 var reqMethod = reqDetails.method
                 // console.log(`reqUrl ${reqMethod}`)
-    
+
                 // Convert headers to Fetch API format
                 let fetchHeaders = new Headers();
                 let headers = {}
-    
+
                 // console.log(fetchHeaders.values())
                 reqHeaders.forEach(header => {
                     fetchHeaders.append(header.name, header.value);
                     headers[header.name] = header.value
                 });
-    
-                if (parseInt(numOfConnetionsToGet) > 50) {
-    
-                console.log(`from send url numOfConnections to get is bigger than 50`)
-    
-    
-                    let requestChunks = Math.floor(parseInt(numOfConnetionsToGet) / 50)
-                    let lastReqestNumberOfElements = parseInt(numOfConnetionsToGet) % 50
-    
-                console.log(`from send url requetChunks : ${requestChunks}`)
-                console.log(`from send url lastNumberOfELement : ${lastReqestNumberOfElements}`)
-    
-    
-    
-                    getRequests(requestChunks, lastReqestNumberOfElements, reqMethod, fetchHeaders, reqUrl).then((conarray) => {
-                        let csvText = exportToCSV(conarray);
+
+                if (parseInt(numOfConnetionsToGet) > requestChunksDivider) {
+
+                    console.log(`from send url numOfConnections to get is bigger than 50`)
+
+
+                    let requestChunks = Math.floor(parseInt(numOfConnetionsToGet) / requestChunksDivider)
+                    let lastReqestNumberOfElements = parseInt(numOfConnetionsToGet) % requestChunksDivider
+
+                    console.log(`from send url requetChunks : ${requestChunks}`)
+                    console.log(`from send url lastNumberOfELement : ${lastReqestNumberOfElements}`)
+
+
+                    getRequests(requestChunks, lastReqestNumberOfElements, reqMethod, fetchHeaders, reqUrl).then((connArray) => {
+                        let csvText = convertToCSV(connArray);
                         console.log("befor after")
-    console.log(csvText);
-    chrome.storage.sync.set({ 'csvText': csvText });
-    console.log("completed requests sending showCSVdownload");
-    chrome.runtime.sendMessage({ greeting: "showCSVdownload" }, function (response) {
-  
-    });
-  
+                        console.log(csvText);
+                        chrome.storage.local.set({ 'csvText': csvText });
+                        console.log("completed requests sending showCSVdownload");
+                        chrome.runtime.sendMessage({ greeting: "showCSVdownload" }, function (response) {
+
+                        });
+
                     })
-    
-    
-    
-    
+
                 } else {
-                console.log(`from send url numOfConnections to get is NOT bigger than 50`)
-    
+                    console.log(`from send url numOfConnections to get is NOT bigger than 50`)
+
                     let newUrl = updateURLParameters(reqUrl, numOfConnetionsToGet, 0)
-                console.log(`from send url numOfConnections to get is NOT bigger than 50 and new url : ${newUrl}`)
-    
-    
-    
+                    console.log(`from send url numOfConnections to get is NOT bigger than 50 and new url : ${newUrl}`)
+
+
+
                     fetch(newUrl, {
                         method: reqMethod,
                         headers: fetchHeaders,
                     }).then(response => {
-    
+
                         response.json().then((data) => {
                             let connectionsArray = data['included'].splice(0, parseInt(numOfConnetionsToGet))
                             // console.log(connectionsArray)
-                            let csvText = exportToCSV(connectionsArray)
+                            let csvText = convertToCSV(connectionsArray)
                             // console.log(csvText)
-                            chrome.storage.sync.set({ 'csvText': csvText })
+                            chrome.storage.local.set({ 'csvText': csvText })
                             chrome.runtime.sendMessage({ greeting: "showCSVdownload" }, function (response) {
-    
+
                             });
-    
-    
+
                         })
                     })
                         .catch(error => {
-    
+
                             console.error(error);
                         });
-    
                 }
-    
-    
-    
-    
-    
-    
-    
-    
-                // fetch(newUrl, {
-                //     method: reqMethod,
-                //     headers: fetchHeaders,
-                // }).then(response => {
-    
-                //     response.json().then((data) => {
-                //         let connectionsArray = data['included'].splice(0, parseInt(numOfConnetionsToGet))
-                //         // console.log(connectionsArray)
-                //         let csvText = exportToCSV(connectionsArray)
-                //         // console.log(csvText)
-                //         chrome.storage.sync.set({ 'csvText': csvText })
-                //         chrome.runtime.sendMessage({ greeting: "showCSVdownload" }, function (response) {
-    
-                //         });
-    
-    
-                //     })
-                // })
-                //     .catch(error => {
-    
-                //         console.error(error);
-                //     });
-    
             })
-    
-    
         } else {
             // console.log(`says undefined ${reqDetails}`)
         }
-        
     }
-   
 }
 
-function exportToCSV(connectionsArray) {
+
+
+function convertToCSV(connectionsArray) {
     console.log("from exportToCsv connection array :")
     console.log(connectionsArray)
 
+    // Titles of the csv
     let csv = "firstName,lastName,headline\n"
-    // console.log(typeof (connectionsArray))
 
     connectionsArray.forEach((connection) => {
-        let row = connection['firstName'] + ',' + connection['lastName'] + ',' + connection['headline'] + '\n'
+
+        // Sanitize values  
+
+        let firstName = connection['firstName'].replace(",",'-').replace("\n",'-')
+        let lastName = connection['lastName'].replace(",",'-').replace("\n",'-')
+        let headline = connection['headline'].replace(",",'-').replace("\n",'-')
+
+        let row_ = connection['firstName'] + ',' + connection['lastName'] + ',' + connection['headline'] + '\n'
+        let row = firstName + ',' + lastName + ',' + headline + '\n'
+
         csv += row
 
     })
-
     return csv
 
 }

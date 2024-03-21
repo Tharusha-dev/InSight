@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var csvDonwloadButton = document.getElementById('csvDownloadButton')
 
 
-  chrome.storage.sync.set({'numOfElements':0})
+  chrome.storage.local.set({'numOfElements':0})
 
   chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
           // csvDonwloadButton.id = "csvDownloadLink"
           // csvDonwloadButton.text = "Export to csv"
           csvLink.download = 'connections.csv'
-          chrome.storage.sync.get().then((val)=>{
+          chrome.storage.local.get().then((val)=>{
             // console.log("from popip")
             // console.log(val)
             csvText = val['csvText']
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-    chrome.storage.sync.set({'numOfElements':numberOfElementsField.value})
+    chrome.storage.local.set({'numOfElements':numberOfElementsField.value})
 
     chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
       console.log(response.farewell);
