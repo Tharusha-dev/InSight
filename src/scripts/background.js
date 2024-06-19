@@ -257,16 +257,19 @@ function convertToCSV(connectionsArray) {
     connectionsArray.forEach((connection) => {
 
         // Sanitize values  
-
-
-        let firstName = connection['firstName'].replaceAll(",", '-').replaceAll("\n", '-')
-        let lastName = connection['lastName'].replaceAll(",", '-').replaceAll("\n", '-')
-        let headline = connection['headline'].replaceAll(",", '-').replaceAll("\n", '-')
-
-        let row_ = connection['firstName'] + ',' + connection['lastName'] + ',' + connection['headline'] + '\n'
-        let row = firstName + ',' + lastName + ',' + headline + '\n'
-
-        csv += row
+               try {
+            let firstName = connection['firstName'].replaceAll(",", '-').replaceAll("\n", '-')
+            let lastName = connection['lastName'].replaceAll(",", '-').replaceAll("\n", '-')
+            let headline = connection['headline'].replaceAll(",", '-').replaceAll("\n", '-')
+    
+            let row_ = connection['firstName'] + ',' + connection['lastName'] + ',' + connection['headline'] + '\n'
+            let row = firstName + ',' + lastName + ',' + headline + '\n'
+    
+            csv += row
+        }catch(e){
+            console.log(connection)
+            console.log(e)
+        }
 
     })
     return csv
